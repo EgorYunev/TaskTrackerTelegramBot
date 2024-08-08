@@ -2,8 +2,6 @@ package org.sharpbubbels.TaskTrackerBot.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
