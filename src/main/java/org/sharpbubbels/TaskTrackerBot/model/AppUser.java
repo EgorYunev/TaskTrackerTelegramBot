@@ -22,9 +22,12 @@ public class AppUser {
     private LocalDateTime dateTimeOfTask;
 
     public void setDateTimeOfTask(String dateTimeOfTaskStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTimeOfTask = LocalDateTime.parse(dateTimeOfTaskStr, formatter);
-
-        this.dateTimeOfTask = dateTimeOfTask;
+        if (dateTimeOfTaskStr == null) {
+            this.dateTimeOfTask = null;
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime dateTimeOfTask = LocalDateTime.parse(dateTimeOfTaskStr, formatter);
+            this.dateTimeOfTask = dateTimeOfTask;
+        }
     }
 }

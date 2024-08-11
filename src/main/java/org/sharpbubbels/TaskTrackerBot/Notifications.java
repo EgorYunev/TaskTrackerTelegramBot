@@ -25,7 +25,7 @@ public class Notifications extends Thread {
         while (true) {
             LocalDateTime current = LocalDateTime.now();
             for (int i = 0; i < appUserList.size(); i++) {
-                if (current.isAfter(appUserList.get(i).getDateTimeOfTask())) {
+                if (appUserList.get(i).getDateTimeOfTask() != null && current.isAfter(appUserList.get(i).getDateTimeOfTask())) {
                     sendMessage.setChatId(appUserList.get(i).getUserChatId());
                     sendMessage.setText(appUserList.get(i).getDateTimeOfTask().toString());
                     TelegramBot bot = new TelegramBot();
