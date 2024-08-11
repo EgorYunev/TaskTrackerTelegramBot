@@ -2,20 +2,24 @@ package org.sharpbubbels.TaskTrackerBot.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 
 @Data
-public class User {
-    String username;
+@Setter
+@Getter
+public class AppUser {
+
+    private Long userChatId;
+    private String username;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", shape = JsonFormat.Shape.STRING)
     private LocalDateTime dateTimeOfTask;
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public void setDateTimeOfTask(String dateTimeOfTaskStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -23,9 +27,4 @@ public class User {
 
         this.dateTimeOfTask = dateTimeOfTask;
     }
-
-    public String getUsername() {
-        return username;
-    }
-
 }

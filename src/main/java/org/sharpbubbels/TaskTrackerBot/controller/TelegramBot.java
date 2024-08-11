@@ -1,6 +1,10 @@
 package org.sharpbubbels.TaskTrackerBot.controller;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import org.sharpbubbels.TaskTrackerBot.Notifications;
+import org.sharpbubbels.TaskTrackerBot.model.AppUser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -8,9 +12,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
+
     @Override
     public String getBotUsername() {
         return "NotificationsTaskTrackerBot";
@@ -24,12 +31,16 @@ public class TelegramBot extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-
-        User user = update.getMessage().getFrom();
-
+        var msg = update.getMessage();
+        User user = msg.getFrom();
+        Long chatId = msg.getChatId();
+        String message = msg.getText();
+        for (int i = 0; i < Notifications.getAppUserList().size(); i++) {
+            if (Notifications.getAppUserList().get(i).getUsername().equals(user.getUserName())) {
+                Notifications.getAppUserList().get(i).setUserChatId(chatId);
+            }
+        }
         SendMessage sendMessage = new SendMessage();
-        long chatId = update.getMessage().getChatId();
-        String message = update.getMessage().getText();
         sendMessage.setChatId(String.valueOf(chatId));
 
         if (message.equals("/start")) {
@@ -40,22 +51,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else if (update.getMessage().getText().equals("/all")) {
             sendMessage.setText("Список ваших задач:");
             execute(sendMessage);
-            for (int i = 0; i < GettingUser.getUserBot().size(); i++) {
-                if (user.getUserName().equals(GettingUser.getUserBot().get(i).getUsername())) {
-                    sendMessage.setText(GettingUser.getUserBot().get(i).getDateTimeOfTask().toString());
-                    execute(sendMessage);
-                }
-            }
-        }
-        while (true) {
-            LocalDateTime current = LocalDateTime.now();
-            for (int i = 0; i < GettingUser.getUserBot().size(); i++) {
-                if (current.isAfter(GettingUser.getUserBot().get(i).getDateTimeOfTask())) {
-                    sendMessage.setText(GettingUser.getUserBot().get(i).getDateTimeOfTask().toString());
-                    execute(sendMessage);
-                    GettingUser.getUserBot().remove(i);
-                }
-            }
         }
     }
 }

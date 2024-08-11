@@ -14,5 +14,7 @@ public class TaskTrackerBotApplication {
 		SpringApplication.run(TaskTrackerBotApplication.class);
 		TelegramBotsApi telegramBotsApi= new TelegramBotsApi(DefaultBotSession.class);
 		telegramBotsApi.registerBot(new TelegramBot());
+		Thread notifications = new Notifications();
+		notifications.start();
 	}
 }
