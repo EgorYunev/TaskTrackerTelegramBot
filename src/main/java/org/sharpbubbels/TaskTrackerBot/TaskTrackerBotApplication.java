@@ -24,7 +24,7 @@ public class TaskTrackerBotApplication {
 	@Bean
 	public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-		telegramBotsApi.registerBot(telegramBot);  // Регистрация бота через Spring Bean
+		telegramBotsApi.registerBot(telegramBot);
 		return telegramBotsApi;
 	}
 }

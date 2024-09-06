@@ -26,18 +26,16 @@ public class Notifications extends Thread {
     @Override
     public void run() {
         while (true) {
-            List<AppUser> users = service.getAllUsers();
             LocalDateTime current = LocalDateTime.now();
-            for (int i = 0; i < users.size(); i++) {
-                List<UserNotifications> notifications = users.get(i).getUserNotifications();
-                for (int j = 0; j < notifications.size(); j++) {
-                    if (current.isAfter(notifications.get(j).getNotification())) {
+            for (AppUser user : service.getAllUsers()) {
+                for (UserNotifications notification : user.getUserNotifications()) {
+                    if (current.isAfter(notification.getNotification()) && user.getUserChatId() != null) {
                         TelegramBot bot = new TelegramBot(service);
                         SendMessage sendMessage = new SendMessage();
-                        sendMessage.setChatId(users.get(i).getUserChatId());
-                        sendMessage.setText(notifications.get(j).getNotification().toString());
+                        sendMessage.setChatId(user.getUserChatId());
+                        sendMessage.setText(notification.getNotification().toString());
                         bot.execute(sendMessage);
-                        notificationsService.deleteNotification(notifications.get(j));
+                        notificationsService.deleteNotification(notification.getId());
                     }
                 }
             }

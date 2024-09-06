@@ -15,7 +15,7 @@ public class AppUser {
     @Id
     private String username;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<UserNotifications> userNotifications;
 
 }

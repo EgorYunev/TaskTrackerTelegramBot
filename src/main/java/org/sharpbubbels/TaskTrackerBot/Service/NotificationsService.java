@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class NotificationsService {
     private UserNotificationsRepository repository;
 
-    public void deleteNotification(UserNotifications notifications) {
-        repository.delete(notifications);
+    public void deleteNotification(Long id) {
+        repository.deleteById(id);
     }
 }

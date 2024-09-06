@@ -14,11 +14,11 @@ public class UserNotifications {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_username")
-    private AppUser user;
-
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime notification;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "user_name")
+    private AppUser user;
 
 }
