@@ -17,8 +17,7 @@ public class UserNotifications {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime notification;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "user_name")
+    @ManyToOne
     private AppUser user;
 
 }

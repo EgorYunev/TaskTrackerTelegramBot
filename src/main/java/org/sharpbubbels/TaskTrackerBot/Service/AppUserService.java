@@ -1,6 +1,7 @@
 package org.sharpbubbels.TaskTrackerBot.Service;
 
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.sharpbubbels.TaskTrackerBot.DTO.UserRequest;
 import org.sharpbubbels.TaskTrackerBot.Repository.AppUserRepository;
@@ -26,34 +27,49 @@ public class AppUserService {
 
     private final UserNotificationsRepository notificationsRepository;
 
+    @Transactional
     public void addAppUser(UserRequest userRequest) {
-        if (repository.findAll().size() < 1) {
-            AppUser user = new AppUser();
-            user.setUsername(userRequest.getUsername());
-            user.setUserNotifications(new ArrayList<>());
-            for (int i = 0; i < userRequest.getDataTimeOfTasks().size(); i++) {
-                UserNotifications notification = new UserNotifications();
-                notification.setUser(user);
-                LocalDateTime dateTime = LocalDateTime.parse(userRequest.getDataTimeOfTasks().get(i), formatter);
-                notification.setNotification(dateTime);
-                user.getUserNotifications().add(notification);
-                notificationsRepository.save(notification);
-            }
+        List<AppUser> users = repository.findAll();
+
+        if (users.isEmpty()) {
+            AppUser user = getAppUser(userRequest);
             repository.save(user);
         } else {
-            for (int i = 0; i < repository.findAll().size(); i++) {
-                if (repository.findAll().get(i).getUsername().equals(userRequest.getUsername())) {
+            for (int i = 0; i < users.size(); i++) {
+                AppUser existingUser = users.get(i);
+
+                if (existingUser.getUsername().equals(userRequest.getUsername())) {
                     for (int j = 0; j < userRequest.getDataTimeOfTasks().size(); j++) {
-                        UserNotifications notifications = new UserNotifications();
+                        UserNotifications notification = new UserNotifications();
                         LocalDateTime dateTime = LocalDateTime.parse(userRequest.getDataTimeOfTasks().get(j), formatter);
-                        notifications.setUser(repository.findAll().get(i));
-                        notifications.setNotification(dateTime);
-                        notificationsRepository.save(notifications);
+                        notification.setUser(existingUser);
+                        notification.setNotification(dateTime);
+                        existingUser.getUserNotifications().add(notification);
                     }
+                    repository.save(existingUser);
                     return;
+                } else if (i == users.size() - 1) {
+                    AppUser user = getAppUser(userRequest);
+                    repository.save(user);
                 }
             }
         }
+    }
+
+
+    private static AppUser getAppUser(UserRequest userRequest) {
+        AppUser user = new AppUser();
+        user.setUsername(userRequest.getUsername());
+        List<UserNotifications> notifications = new ArrayList<>();
+        for (int i = 0; i < userRequest.getDataTimeOfTasks().size(); i++) {
+            UserNotifications notification = new UserNotifications();
+            notification.setUser(user);
+            LocalDateTime dateTime = LocalDateTime.parse(userRequest.getDataTimeOfTasks().get(i), formatter);
+            notification.setNotification(dateTime);
+            notifications.add(notification);
+        }
+        user.setUserNotifications(notifications);
+        return user;
     }
 
     public List<AppUser> getAllUsers() {
